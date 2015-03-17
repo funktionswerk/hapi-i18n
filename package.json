@@ -1,0 +1,41 @@
+{
+  "name": "hapi-i18n",
+  "version": "1.0.0",
+  "description": "Translation module for hapi based on mashpie's i18n module",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha --recursive test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codeva/hapi-i18n.git"
+  },
+  "keywords": [
+    "hapi",
+    "internationalization",
+    "localization",
+    "translation",
+    "nodejs"
+  ],
+  "author": "Kay Wolter",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/codeva/hapi-i18n/issues"
+  },
+  "homepage": "https://github.com/codeva/hapi-i18n",
+  "devDependencies": {
+    "hapi": "^8.4.0",
+    "jade": "^1.9.2",
+    "mocha": "^2.2.1",
+    "should": "^5.2.0"
+  },
+  "dependencies": {
+    "boom": "^2.6.1",
+    "hoek": "^2.11.1",
+    "i18n": "^0.5.0",
+    "lodash": "^3.5.0"
+  }
+}
