@@ -1,2 +1,67 @@
 # hapi-i18n
 Translation module for hapi based on mashpie's i18n module
+
+## Usage
+
+For details see the examples in the [mocha tests](test/test.js).
+
+The i18n module is attached to the request object configured with the requested locale. This ensures that the correct locale is set for the request when processing multiple requests at the same time.
+
+JavaScript example:
+```js
+function ( request, reply ){
+  return reply({
+    message: request.i18n.__( "My localized string" )
+  });
+});
+```
+
+Template example (Jade):
+```
+doctype html
+html(lang=languageCode)
+  body
+    p!= __("My localized string")
+```
+
+## Register Plugin
+
+Basic configuration to define the supported locales and the directory to load the translation files from:
+
+```js
+server.register(
+  {
+    register: require( "hapi-i18n" ),
+    options: {
+      locales: ["de", "en", "fr"],
+      directory: __dirname + "/locales"
+    }
+  },
+  function ( err ){
+    if ( err ){
+      console.log( err );
+    }
+  }
+);
+```
+The configuration options are passed directly to mashpie's i18n module. To get the full list of available options see [mashpie/i18n-node](https://github.com/mashpie/i18n-node). The default locale is the first locale found in the list, in this example "de".
+
+## Define Resources
+The requested language is specified by a path parameter *languageCode* in your resource urls (Mozilla style): 
+
+```js
+server.route({
+  method: "GET",
+  path: "/{languageCode}/my/localized/resource",
+  handler: function ( request, reply ){
+    return reply({
+      message: request.i18n.__( "My localized string" )
+    });
+  }
+});
+```
+Example request:
+```
+http://localhost/fr/my/localized/resource.
+```
+The language code is evaluated automatically. If a language code is found for the requested path parameter, the according locale is set. If the language code does not match any of configured language codes, the plugin returns 404 (NotFound).
