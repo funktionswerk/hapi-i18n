@@ -1,6 +1,11 @@
 # hapi-i18n
 Translation module for hapi based on mashpie's i18n module
 
+## Installation
+```
+npm install hapi-i18n
+```
+
 ## Usage
 
 For details see the examples in the [mocha tests](test/test.js).
