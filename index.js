@@ -1,6 +1,6 @@
 var I18n = require( "i18n" );
-var Boom = require( 'boom' );
-var Hoek = require( 'hoek' );
+var Boom = require( "boom" );
+var Hoek = require( "hoek" );
 var _ = require( "lodash" );
 
 exports.register = function ( server, options, next ) {
@@ -18,7 +18,7 @@ exports.register = function ( server, options, next ) {
     throw Error( "No locales defined!" );
   }
   
-  server.ext( 'onPreHandler', function( request, reply ){
+  server.ext( "onPreHandler", function( request, reply ){
     request.i18n = {};
     I18n.init( request, request.i18n );
     request.i18n.setLocale( defaultLocale );
@@ -31,7 +31,7 @@ exports.register = function ( server, options, next ) {
     return reply.continue();
   });
   
-  server.ext( 'onPreResponse', function ( request, reply ){
+  server.ext( "onPreResponse", function ( request, reply ){
     if ( !request.i18n || !request.response ){
       return reply.continue();
     }
@@ -58,5 +58,5 @@ exports.extractDefaultLocale = function( allLocales )
 };
 
 exports.register.attributes = {
-    name: 'locale'
+    pkg: require('./package.json')
 };
