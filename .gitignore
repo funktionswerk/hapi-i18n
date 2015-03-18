@@ -1,3 +1,4 @@
 .project
 node_modules/
 test/database.json
+npm-debug.log
