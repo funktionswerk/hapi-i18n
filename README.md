@@ -52,7 +52,7 @@ server.register(
 The configuration options are passed directly to mashpie's i18n module. To get the full list of available options see [mashpie/i18n-node](https://github.com/mashpie/i18n-node). The default locale is the first locale found in the list, in this example "de".
 
 ## Define Resources
-The requested language is specified by a path parameter *languageCode* in your resource urls (Mozilla style): 
+The requested language is specified by a path parameter *languageCode* in your resource urls: 
 
 ```js
 server.route({
