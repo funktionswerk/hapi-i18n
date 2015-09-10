@@ -18,27 +18,31 @@ exports.register = function ( server, options, next ) {
     throw Error( "No locales defined!" );
   }
   
-  server.ext( "onPreHandler", function( request, reply ){
-    request.i18n = {};
-    I18n.init( request, request.i18n );
-    request.i18n.setLocale( defaultLocale );
-    if ( request.params && request.params.languageCode ) {
-      if ( _.includes( pluginOptions.locales, request.params.languageCode ) == false ) {
-        return reply( Boom.notFound( "No localization available for " + request.params.languageCode ) );
-      }
-      request.i18n.setLocale( request.params.languageCode );
+  server.decorate("request", "i18n", function(){
+    if(!this._i18n){
+        this._i18n = {};
+        I18n.init( this, this._i18n );
+        this._i18n.setLocale( defaultLocale );
+        if ( this.params && this.params.languageCode ) {
+          if ( _.includes( pluginOptions.locales, this.params.languageCode ) == false ) {
+            return reply( Boom.notFound( "No localization available for " + this.params.languageCode ) );
+          }
+          this._i18n.setLocale( this.params.languageCode );
+        }
     }
-    return reply.continue();
-  });
+    return this._i18n;
+  })
+  
+ 
   
   server.ext( "onPreResponse", function ( request, reply ){
-    if ( !request.i18n || !request.response ){
+    if (!request.response){
       return reply.continue();
     }
     var response = request.response;
     if ( response.variety === 'view' ){
-      response.source.context = Hoek.merge( response.source.context || {}, request.i18n );
-      response.source.context.languageCode = request.i18n.getLocale();
+      response.source.context = Hoek.merge( response.source.context || {}, request.i18n() );
+      response.source.context.languageCode = request.i18n().getLocale();
     }
     return reply.continue();
   })
