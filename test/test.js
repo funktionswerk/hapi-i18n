@@ -86,8 +86,7 @@ describe( "Localization", function() {
             param: Joi.string().required()
           },
           failAction: function (request, reply, source, error) {
-            return reply('Validation failed').code(400);
-            //return request.i18n.__('Validation failed');
+            return request.i18n.__("Validation failed").code(400);
           }
         }
       }
