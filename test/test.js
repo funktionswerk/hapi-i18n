@@ -1,6 +1,7 @@
 var Should = require( "should" );
 var Hapi = require( "hapi" );
 var Path = require( "path" );
+var Joi = require( "joi" );
 var Locale = require( "../" );
 
 describe( "Localization", function() {
@@ -72,6 +73,23 @@ describe( "Localization", function() {
           return reply.view( "test" );
         });
         
+      }
+    });
+    server.route({
+      method: "POST",
+      path: "/{languageCode}/localized/validation",
+      handler: function(){
+      },
+      config: {
+        validate: {
+          payload: {
+            param: Joi.string().required()
+          },
+          failAction: function (request, reply, source, error) {
+            return reply('Validation failed').code(400);
+            //return request.i18n.__('Validation failed');
+          }
+        }
       }
     });
 
@@ -152,6 +170,20 @@ describe( "Localization", function() {
             done();
           }
         );
+    });
+
+    it( "is aivailable in the validation failAction handler ", function(done){
+      server.inject(
+        {
+          method: "POST",
+          url: "/de/localized/validation"
+        },
+        function ( response ) {
+          response.statusCode.should.equal( 400 );
+          response.result.should.equal( "Prüfung fehlgeschlagen" );
+          done();
+        }
+      );
     });
     
     it( "must asure correct localization when processing requests concurrently", function(done){

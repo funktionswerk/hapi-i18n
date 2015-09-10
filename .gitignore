@@ -1,4 +1,6 @@
 .project
+.idea/
+*.iml
 node_modules/
 test/database.json
 npm-debug.log
