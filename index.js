@@ -18,7 +18,7 @@ exports.register = function ( server, options, next ) {
     throw Error( "No locales defined!" );
   }
   
-  server.ext( "onPreHandler", function( request, reply ){
+  server.ext( "onPreAuth", function( request, reply ){
     request.i18n = {};
     I18n.init( request, request.i18n );
     request.i18n.setLocale( defaultLocale );
