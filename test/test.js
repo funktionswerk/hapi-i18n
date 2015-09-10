@@ -171,7 +171,7 @@ describe( "Localization", function() {
         );
     });
 
-    it( "is aivailable in the validation failAction handler ", function(done){
+    it( "is available in the validation failAction handler ", function(done){
       server.inject(
         {
           method: "POST",
