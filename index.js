@@ -28,6 +28,9 @@ exports.register = function ( server, options, next ) {
       }
       request.i18n.setLocale( request.params.languageCode );
     }
+    if (pluginOptions.headerKey && pluginOptions.headerKey && request.headers[pluginOptions.headerKey]) {
+      request.i18n.setLocale(request.headers[pluginOptions.headerKey]);
+    }
     return reply.continue();
   });
   
