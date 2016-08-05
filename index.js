@@ -22,14 +22,17 @@ exports.register = function ( server, options, next ) {
     request.i18n = {};
     I18n.init( request, request.i18n );
     request.i18n.setLocale( defaultLocale );
+    if (pluginOptions.languageHeaderField) {
+      var languageCode = request.headers[pluginOptions.languageHeaderField];
+      if (languageCode) {
+        request.i18n.setLocale(languageCode);
+      }
+    }
     if ( request.params && request.params.languageCode ) {
       if ( _.includes( pluginOptions.locales, request.params.languageCode ) == false ) {
         return reply( Boom.notFound( "No localization available for " + request.params.languageCode ) );
       }
       request.i18n.setLocale( request.params.languageCode );
-    }
-    if (pluginOptions.headerKey && pluginOptions.headerKey && request.headers[pluginOptions.headerKey]) {
-      request.i18n.setLocale(request.headers[pluginOptions.headerKey]);
     }
     return reply.continue();
   });

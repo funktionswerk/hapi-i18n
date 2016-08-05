@@ -114,7 +114,7 @@ describe( "Localization", function() {
           options: {
             locales: ["de", "en", "fr"],
             directory: __dirname + "/locales",
-            headerKey: "language"
+            languageHeaderField: "language"
           }
         },
         function ( err ) {
@@ -159,7 +159,7 @@ describe( "Localization", function() {
         );
     });
 
-    it( "uses the requestd locale if language code is provided in headers", function(done) {
+    it( "uses the requested locale if language code is provided in headers", function(done) {
       server.inject(
         {
           method: "GET",
@@ -172,10 +172,40 @@ describe( "Localization", function() {
           response.result.locale.should.equal( "fr" );
           response.result.requestedLocale.should.equal( "fr" );
           response.result.message.should.equal( translateString_fr );
-          done();
+          server.inject(
+            {
+              method: "GET",
+              url: "/localized/with/headers",
+              headers: {
+              }
+            },
+            function ( response ) {
+              response.result.locale.should.equal( "de" );
+              response.result.message.should.equal( translateString_de );
+              done();
+            }
+          )
         }
       )
     })
+
+    it( "uses the language path parameter over the header parameter because this is more explicit", function( done ) {
+      server.inject(
+        {
+          method: "GET",
+          url: "/fr/localized/resource",
+          headers: {
+            "language": "en"
+          }
+        },
+        function ( response ) {
+          response.result.locale.should.equal( "fr" );
+          response.result.requestedLocale.should.equal( "fr" );
+          response.result.message.should.equal( translateString_fr );
+          done();
+        }
+      );
+    });
 
     it( "translates localized strings in jade templates", function( done ) {
       server.inject(
