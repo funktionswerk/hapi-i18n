@@ -51,6 +51,25 @@ server.register(
 ```
 The configuration options are passed directly to mashpie's i18n module. To get the full list of available options see [mashpie/i18n-node](https://github.com/mashpie/i18n-node). The default locale is the first locale found in the list, in this example "de".
 
+As an alternative to the path parameter you can also read the language code from the request header:
+```
+server.register(
+  {
+    register: require( "hapi-i18n" ),
+    options: {
+      locales: ["de", "en", "fr"],
+      directory: __dirname + "/locales",
+      languageHeaderField: "language"
+    }
+  },
+  function ( err ){
+    if ( err ){
+      console.log( err );
+    }
+  }
+);
+```
+
 ## Define Resources
 The requested language is specified by a path parameter *languageCode* in your resource urls: 
 
