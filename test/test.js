@@ -91,6 +91,21 @@ describe( "Localization", function() {
         }
       }
     });
+    server.route({
+      method: "GET",
+      path: "/localized/with/headers",
+      handler: function(request, reply) {
+        doSomething( function(){
+          return reply(
+            {
+              locale: request.i18n.getLocale(),
+              requestedLocale: request.headers["language"],
+              message: request.i18n.__( translateString_en )
+            }
+          );
+        });
+      }
+    })
 
     it( "can be added as plugin", function( done ) {
       server.register(
@@ -98,7 +113,8 @@ describe( "Localization", function() {
           register: Locale,
           options: {
             locales: ["de", "en", "fr"],
-            directory: __dirname + "/locales"
+            directory: __dirname + "/locales",
+            languageHeaderField: "language"
           }
         },
         function ( err ) {
@@ -141,6 +157,54 @@ describe( "Localization", function() {
             done();
           }
         );
+    });
+
+    it( "uses the requested locale if language code is provided in headers", function(done) {
+      server.inject(
+        {
+          method: "GET",
+          url: "/localized/with/headers",
+          headers: {
+            "language": "fr"
+          }
+        },
+        function ( response ) {
+          response.result.locale.should.equal( "fr" );
+          response.result.requestedLocale.should.equal( "fr" );
+          response.result.message.should.equal( translateString_fr );
+          server.inject(
+            {
+              method: "GET",
+              url: "/localized/with/headers",
+              headers: {
+              }
+            },
+            function ( response ) {
+              response.result.locale.should.equal( "de" );
+              response.result.message.should.equal( translateString_de );
+              done();
+            }
+          )
+        }
+      )
+    })
+
+    it( "uses the language path parameter over the header parameter because this is more explicit", function( done ) {
+      server.inject(
+        {
+          method: "GET",
+          url: "/fr/localized/resource",
+          headers: {
+            "language": "en"
+          }
+        },
+        function ( response ) {
+          response.result.locale.should.equal( "fr" );
+          response.result.requestedLocale.should.equal( "fr" );
+          response.result.message.should.equal( translateString_fr );
+          done();
+        }
+      );
     });
 
     it( "translates localized strings in jade templates", function( done ) {
@@ -258,7 +322,6 @@ describe( "Localization", function() {
               }
             }
           );
-        
       }
     })
     
