@@ -27,6 +27,14 @@ doctype html
 html(lang=languageCode)
   body
     p!= __("My localized string")
+    p!= __("hello", {name:'Manu'})
+```
+
+Template example (Nunjucks)
+```
+<p>{{__("My localized string")}}</p>
+<p>{{ __('hello', {name:'Manu} ) }}</p>
+<p>{{ __('hello', name='Manu2' ) }}</p>
 ```
 
 ## Register Plugin
