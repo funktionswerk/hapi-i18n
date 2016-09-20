@@ -30,7 +30,7 @@ html(lang=languageCode)
     p!= __("hello", {name:"Manu"})
 ```
 
-Template example (Nunjucks)
+Template example (Nunjucks):
 ```
 <p>{{ __("My localized string") }}</p>
 <p>{{ __("hello", {name:"Manu"}) }}</p>
