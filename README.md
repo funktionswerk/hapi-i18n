@@ -32,8 +32,8 @@ html(lang=languageCode)
 
 Template example (Nunjucks)
 ```
-<p>{{__("My localized string")}}</p>
-<p>{{ __("hello", {name:"Manu"} ) }}</p>
+<p>{{ __("My localized string") }}</p>
+<p>{{ __("hello", {name:"Manu"}) }}</p>
 <p>{{ __("hello", name="Manu2") }}</p>
 ```
 
