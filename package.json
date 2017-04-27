@@ -1,6 +1,6 @@
 {
   "name": "hapi-i18n",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Translation module for hapi based on mashpie's i18n module",
   "main": "index.js",
   "directories": {
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/codeva/hapi-i18n.git"
+    "url": "https://github.com/funktionswerk/hapi-i18n.git"
   },
   "keywords": [
     "hapi",
