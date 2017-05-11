@@ -12,7 +12,7 @@ exports.register = function ( server, options, next ) {
   }
   I18n.configure( pluginOptions );
   
-  var defaultLocale = exports.extractDefaultLocale( pluginOptions.locales );
+  var defaultLocale = pluginOptions.defaultLocale || exports.extractDefaultLocale( pluginOptions.locales );
   
   if ( !pluginOptions.locales ) {
     throw Error( "No locales defined!" );
@@ -33,6 +33,9 @@ exports.register = function ( server, options, next ) {
         return reply( Boom.notFound( "No localization available for " + request.params.languageCode ) );
       }
       request.i18n.setLocale( request.params.languageCode );
+    }
+    if (pluginOptions.queryParameter && request.query && request.query[pluginOptions.queryParameter]) {
+        request.i18n.setLocale(request.query[pluginOptions.queryParameter]);
     }
     return reply.continue();
   });
