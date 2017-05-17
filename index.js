@@ -4,20 +4,20 @@ var Hoek = require( "hoek" );
 var _ = require( "lodash" );
 
 exports.register = function ( server, options, next ) {
-  
+
   var pluginOptions = {};
   if ( options )
   {
     pluginOptions = options;
   }
   I18n.configure( pluginOptions );
-  
+
   var defaultLocale = pluginOptions.defaultLocale || exports.extractDefaultLocale( pluginOptions.locales );
-  
+
   if ( !pluginOptions.locales ) {
     throw Error( "No locales defined!" );
   }
-  
+
   server.ext( "onPreAuth", function( request, reply ){
     request.i18n = {};
     I18n.init( request, request.i18n );
@@ -28,18 +28,21 @@ exports.register = function ( server, options, next ) {
         request.i18n.setLocale(languageCode);
       }
     }
+
+    if (pluginOptions.queryParameter && request.query && request.query[pluginOptions.queryParameter]) {
+        request.i18n.setLocale(request.query[pluginOptions.queryParameter]);
+    }
+
     if ( request.params && request.params.languageCode ) {
       if ( _.includes( pluginOptions.locales, request.params.languageCode ) == false ) {
         return reply( Boom.notFound( "No localization available for " + request.params.languageCode ) );
       }
       request.i18n.setLocale( request.params.languageCode );
     }
-    if (pluginOptions.queryParameter && request.query && request.query[pluginOptions.queryParameter]) {
-        request.i18n.setLocale(request.query[pluginOptions.queryParameter]);
-    }
+
     return reply.continue();
   });
-  
+
   server.ext( "onPreResponse", function ( request, reply ){
     if ( !request.i18n || !request.response ){
       return reply.continue();
@@ -51,7 +54,7 @@ exports.register = function ( server, options, next ) {
     }
     return reply.continue();
   })
-  
+
   next();
 };
 
