@@ -21,7 +21,7 @@ describe( "Localization", function() {
       var fs = require( "fs" );
       var fileName = Path.join( __dirname, "database.json" );
       fs.writeFile(fileName, JSON.stringify(data), function(err) {
-        Should( err ).not.exist;
+        Should.not.exist(err);
         cb();
       });
     }
