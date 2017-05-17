@@ -105,7 +105,23 @@ describe( "Localization", function() {
           );
         });
       }
-    })
+    });
+
+    server.route({
+       method: "GET",
+       path: "/localized/with/query",
+       handler: function(request, reply) {
+         doSomething( function(){
+           return reply(
+             {
+                 locale: request.i18n.getLocale(),
+                 requestedLocale: request.query["lang"],
+                 message: request.i18n.__( translateString_en )
+             }
+           );
+         });
+       }
+    });
 
     it( "can be added as plugin", function( done ) {
       server.register(
@@ -116,7 +132,7 @@ describe( "Localization", function() {
             directory: __dirname + "/locales",
             languageHeaderField: "language",
             queryParameter: "lang",
-            defaultLocale : "de"
+            //defaultLocale : "de"
           }
         },
         function ( err ) {
@@ -209,10 +225,7 @@ describe( "Localization", function() {
       server.inject(
         {
           method: "GET",
-          url: "/localized/with/headers?lang=fr",
-          headers: {
-            "language": "en"
-          }
+          url: "/localized/with/query?lang=fr",
         },
         function ( response ) {
           response.result.locale.should.equal( "fr" );
