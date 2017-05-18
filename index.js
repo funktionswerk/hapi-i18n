@@ -27,13 +27,9 @@ exports.register = function ( server, options, next ) {
       if (languageCode) {
         request.i18n.setLocale(languageCode);
       }
-    }
-
-    if (pluginOptions.queryParameter && request.query && request.query[pluginOptions.queryParameter]) {
+    }else if (pluginOptions.queryParameter && request.query && request.query[pluginOptions.queryParameter]) {
         request.i18n.setLocale(request.query[pluginOptions.queryParameter]);
-    }
-
-    if ( request.params && request.params.languageCode ) {
+    }else if ( request.params && request.params.languageCode ) {
       if ( _.includes( pluginOptions.locales, request.params.languageCode ) == false ) {
         return reply( Boom.notFound( "No localization available for " + request.params.languageCode ) );
       }
