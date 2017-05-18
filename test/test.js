@@ -132,7 +132,6 @@ describe( "Localization", function() {
             directory: __dirname + "/locales",
             languageHeaderField: "language",
             queryParameter: "lang",
-            //defaultLocale : "de"
           }
         },
         function ( err ) {
