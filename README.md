@@ -102,7 +102,7 @@ The language code is evaluated automatically. If a language code is found for th
 The queryParameter is specified by the plugin option `queryParameter`. For example if you define your plugin like this :
 
 ```js
-erver.register(
+server.register(
   {
     register: require( "hapi-i18n" ),
     options: {
@@ -129,7 +129,7 @@ http://localhost/my/localized/resource?lang=fr.
 If your requested locale is not found, the default locale is sellected. By default, the default locale is the first element in the `locales` option. But, you can specify this with the `defaultLocale` parameter :
 
 ```js
-erver.register(
+server.register(
   {
     register: require( "hapi-i18n" ),
     options: {
