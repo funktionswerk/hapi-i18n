@@ -28,7 +28,10 @@ exports.register = function ( server, options, next ) {
         request.i18n.setLocale(languageCode);
       }
     }else if (pluginOptions.queryParameter && request.query && request.query[pluginOptions.queryParameter]) {
-        request.i18n.setLocale(request.query[pluginOptions.queryParameter]);
+      if ( _.includes( pluginOptions.locales, request.query[pluginOptions.queryParameter] ) == false ) {
+        return reply( Boom.notFound( "No localization available for " + request.query[pluginOptions.queryParameter] ) );
+      }  
+      request.i18n.setLocale(request.query[pluginOptions.queryParameter]);
     }else if ( request.params && request.params.languageCode ) {
       if ( _.includes( pluginOptions.locales, request.params.languageCode ) == false ) {
         return reply( Boom.notFound( "No localization available for " + request.params.languageCode ) );
