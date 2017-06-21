@@ -79,7 +79,7 @@ server.register(
 ```
 
 ## Define Resources
-The requested language is specified by a path parameter *languageCode* in your resource urls:
+The requested language is specified by a path parameter *languageCode* in your resource urls: 
 
 ```js
 server.route({
@@ -97,51 +97,3 @@ Example request:
 http://localhost/fr/my/localized/resource.
 ```
 The language code is evaluated automatically. If a language code is found for the requested path parameter, the according locale is set. If the language code does not match any of configured language codes, the plugin returns 404 (NotFound).
-
-## Define QueryParameter
-The queryParameter is specified by the plugin option `queryParameter`. For example if you define your plugin like this :
-
-```js
-server.register(
-  {
-    register: require( "hapi-i18n" ),
-    options: {
-      locales: ["de", "en", "fr"],
-      directory: __dirname + "/locales",
-      queryParameter: 'lang',
-    }
-  },
-  function ( err ){
-    if ( err ){
-      console.log( err );
-    }
-  }
-);
-```
-
-Now the requested locale is setted in the `lang` query parameter. You should request localized ressources with this example query :
-```
-http://localhost/my/localized/resource?lang=fr.
-```
-
-## Define default locale
-
-If your requested locale is not found, the default locale is sellected. By default, the default locale is the first element in the `locales` option. But, you can specify this with the `defaultLocale` parameter :
-
-```js
-server.register(
-  {
-    register: require( "hapi-i18n" ),
-    options: {
-      locales: ["de", "en", "fr"],
-      directory: __dirname + "/locales",
-      defaultLocale: 'fr',
-    }
-  },
-  function ( err ){
-    if ( err ){
-      console.log( err );
-    }
-  }
-);
-```
