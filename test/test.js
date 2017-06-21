@@ -6,11 +6,11 @@ var Locale = require( "../" );
 
 describe( "Localization", function() {
   describe( "Usage of locale in hapi", function() {
-    
+
     var translateString_en = "All's well that ends well.";
     var translateString_de = "Ende gut, alles gut.";
     var translateString_fr = "Tout est bien qui finit bien.";
-    
+
     var doSomething = function( cb ){
       var data = {
           rows: []
@@ -21,11 +21,11 @@ describe( "Localization", function() {
       var fs = require( "fs" );
       var fileName = Path.join( __dirname, "database.json" );
       fs.writeFile(fileName, JSON.stringify(data), function(err) {
-        Should( err ).not.exist;
+        Should.not.exist(err);
         cb();
       });
     }
-    
+
     var server = new Hapi.Server();
     server.connection( { port: 8047 } );
     server.views({
@@ -34,7 +34,7 @@ describe( "Localization", function() {
       },
       path: Path.join( __dirname, "views" )
     });
-    
+
     server.route({
       method: "GET",
       path: "/no/language-code/path/parameter",
@@ -62,7 +62,7 @@ describe( "Localization", function() {
               }
             );
         });
-        
+
       }
     });
     server.route({
@@ -72,7 +72,7 @@ describe( "Localization", function() {
         doSomething( function(){
           return reply.view( "test" );
         });
-        
+
       }
     });
     server.route({
@@ -105,7 +105,23 @@ describe( "Localization", function() {
           );
         });
       }
-    })
+    });
+
+    server.route({
+       method: "GET",
+       path: "/localized/with/query",
+       handler: function(request, reply) {
+         doSomething( function(){
+           return reply(
+             {
+                 locale: request.i18n.getLocale(),
+                 requestedLocale: request.query["lang"],
+                 message: request.i18n.__( translateString_en )
+             }
+           );
+         });
+       }
+    });
 
     it( "can be added as plugin", function( done ) {
       server.register(
@@ -114,7 +130,8 @@ describe( "Localization", function() {
           options: {
             locales: ["de", "en", "fr"],
             directory: __dirname + "/locales",
-            languageHeaderField: "language"
+            languageHeaderField: "language",
+            queryParameter: "lang",
           }
         },
         function ( err ) {
@@ -123,18 +140,32 @@ describe( "Localization", function() {
         }
       );
     });
-    
+
     it( "extracts the default locale from the configured locales", function() {
       Should.throws( function(){ Locale.extractDefaultLocale() }, Error );
       Should.throws( function(){ Locale.extractDefaultLocale( [] ) }, Error );
       Locale.extractDefaultLocale( [ "fr", "de" ] ).should.equal( "fr" );
     });
-    
+
     it( "uses the default locale if no language code path parameter is available", function( done ) {
       server.inject(
           {
             method: "GET",
             url: "/no/language-code/path/parameter"
+          },
+          function ( response ) {
+            response.result.locale.should.equal( "de" );
+            response.result.message.should.equal( translateString_de );
+            done();
+          }
+        );
+    });
+
+    it( "uses the default locale if language code query parameter is not in the list", function( done ) {
+      server.inject(
+          {
+            method: "GET",
+            url: "/no/language-code/path/parameter?lang=cs"
           },
           function ( response ) {
             response.result.locale.should.equal( "de" );
@@ -188,6 +219,21 @@ describe( "Localization", function() {
         }
       )
     })
+
+    it( "uses the language query parameter over the header parameter because this is more explicit", function( done ) {
+      server.inject(
+        {
+          method: "GET",
+          url: "/localized/with/query?lang=fr",
+        },
+        function ( response ) {
+          response.result.locale.should.equal( "fr" );
+          response.result.requestedLocale.should.equal( "fr" );
+          response.result.message.should.equal( translateString_fr );
+          done();
+        }
+      );
+    });
 
     it( "uses the language path parameter over the header parameter because this is more explicit", function( done ) {
       server.inject(
@@ -248,7 +294,7 @@ describe( "Localization", function() {
         }
       );
     });
-    
+
     it( "must asure correct localization when processing requests concurrently", function(done){
       var numIterations = 200;
       var numRequestsPerIteration = 3;
@@ -259,14 +305,14 @@ describe( "Localization", function() {
       var numErrorsWrongRequestedLocale = 0;
       this.timeout( numTotalRequests * 10 );
       for ( iteration = 0; iteration < numIterations; ++iteration ){
-        
+
         var onLastResponse = function(){
           numProcessedRequests.should.equal( numTotalRequests );
           numErrorsWrongDefaultLocale.should.equal( 0 );
           numErrorsWrongRequestedLocale.should.equal( 0 );
           done();
         }
-        
+
         server.inject(
             {
               method: "GET",
@@ -324,7 +370,7 @@ describe( "Localization", function() {
           );
       }
     })
-    
+
   })
 
 })
