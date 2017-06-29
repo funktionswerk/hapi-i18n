@@ -43,7 +43,8 @@ There are three possibilities to pass and read the language code.
 
 ### Path parameter
 
-Basic configuration to define the supported locales and the directory to load the translation files from:
+The first option is passing the language code with a path parameter.
+The basic configuration to define the supported locales and the directory to load the translation files from is as follows:
 
 ```js
 server.register(
@@ -61,7 +62,8 @@ server.register(
   }
 );
 ```
-The configuration options are passed directly to mashpie's i18n module. To get the full list of available options see [mashpie/i18n-node](https://github.com/mashpie/i18n-node). The default locale is the first locale found in the list, in this example "de".
+The configuration options are passed directly to mashpie's i18n module.
+To get the full list of available options see [mashpie/i18n-node](https://github.com/mashpie/i18n-node). The default locale is the first locale found in the list, in this example "de".
 
 The requested language is specified by a path parameter *languageCode* in your resource urls:
 
@@ -80,7 +82,8 @@ Example request:
 ```
 http://localhost/fr/my/localized/resource.
 ```
-The language code is evaluated automatically. If a language code is found for the requested path parameter, the according locale is set. If the language code does not match any of configured language codes, the plugin returns 404 (NotFound).
+The language code is evaluated automatically. If a language code is found for the requested path parameter then the according locale is set.
+If the language code does not match any of the configured language codes, the plugin returns 404 (NotFound).
 
 ### Language code from the request header
 
@@ -130,9 +133,11 @@ The requested locale can be passed with the `lang` query parameter. Example requ
 http://localhost/my/localized/resource?lang=fr.
 ```
 
+If the language code does not match any of the configured language codes, the plugin returns 404 (NotFound).
+
 ## Define default locale
 
-If your requested locale is not found, the default locale is selected. By default, the default locale is the first element in the `locales` option.
+If no locale is defined, the default locale is selected. By default, the default locale is the first element in the `locales` option.
 However, you can specify this with the `defaultLocale` parameter :
 
 ```js
