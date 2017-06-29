@@ -161,20 +161,6 @@ describe( "Localization", function() {
         );
     });
 
-    it( "uses the default locale if language code query parameter is not in the list", function( done ) {
-      server.inject(
-          {
-            method: "GET",
-            url: "/no/language-code/path/parameter?lang=cs"
-          },
-          function ( response ) {
-            response.result.locale.should.equal( "de" );
-            response.result.message.should.equal( translateString_de );
-            done();
-          }
-        );
-    });
-
     it( "uses the requested locale if language code is provided", function( done ) {
       server.inject(
           {
