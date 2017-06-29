@@ -39,6 +39,10 @@ Template example (Nunjucks):
 
 ## Register Plugin
 
+There are three possibilities to pass and read the language code.
+
+### Path parameter
+
 Basic configuration to define the supported locales and the directory to load the translation files from:
 
 ```js
@@ -59,26 +63,6 @@ server.register(
 ```
 The configuration options are passed directly to mashpie's i18n module. To get the full list of available options see [mashpie/i18n-node](https://github.com/mashpie/i18n-node). The default locale is the first locale found in the list, in this example "de".
 
-As an alternative to the path parameter you can also read the language code from the request header:
-```
-server.register(
-  {
-    register: require( "hapi-i18n" ),
-    options: {
-      locales: ["de", "en", "fr"],
-      directory: __dirname + "/locales",
-      languageHeaderField: "language"
-    }
-  },
-  function ( err ){
-    if ( err ){
-      console.log( err );
-    }
-  }
-);
-```
-
-## Define Resources
 The requested language is specified by a path parameter *languageCode* in your resource urls:
 
 ```js
@@ -98,8 +82,30 @@ http://localhost/fr/my/localized/resource.
 ```
 The language code is evaluated automatically. If a language code is found for the requested path parameter, the according locale is set. If the language code does not match any of configured language codes, the plugin returns 404 (NotFound).
 
-## Define QueryParameter
-The queryParameter is specified by the plugin option `queryParameter`. For example if you define your plugin like this :
+### Language code from the request header
+
+As an alternative to the path parameter you can also read the language code from the request header:
+```
+server.register(
+  {
+    register: require( "hapi-i18n" ),
+    options: {
+      locales: ["de", "en", "fr"],
+      directory: __dirname + "/locales",
+      languageHeaderField: "language"
+    }
+  },
+  function ( err ){
+    if ( err ){
+      console.log( err );
+    }
+  }
+);
+```
+
+### Query parameter
+
+A third option is passing the language code with a query parameter (plugin option `queryParameter`). Example:
 
 ```js
 server.register(
@@ -119,14 +125,15 @@ server.register(
 );
 ```
 
-Now the requested locale is setted in the `lang` query parameter. You should request localized ressources with this example query :
+The requested locale can be passed with the `lang` query parameter. Example request:
 ```
 http://localhost/my/localized/resource?lang=fr.
 ```
 
 ## Define default locale
 
-If your requested locale is not found, the default locale is sellected. By default, the default locale is the first element in the `locales` option. But, you can specify this with the `defaultLocale` parameter :
+If your requested locale is not found, the default locale is selected. By default, the default locale is the first element in the `locales` option.
+However, you can specify this with the `defaultLocale` parameter :
 
 ```js
 server.register(
