@@ -87,7 +87,7 @@ If the language code does not match any of the configured language codes, the pl
 
 ### Language code from the request header
 
-As an alternative to the path parameter you can also read the language code from the request header:
+The second option is reading the language code from the request header:
 ```
 server.register(
   {
