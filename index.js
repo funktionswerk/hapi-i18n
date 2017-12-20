@@ -3,7 +3,7 @@ var Boom = require("boom");
 var Hoek = require("hoek");
 var _ = require("lodash");
 
-exports.register = function (server, options, next) {
+exports.register = function (server, options) {
 
   var pluginOptions = {};
   if (options) {
@@ -17,18 +17,20 @@ exports.register = function (server, options, next) {
     throw Error("No locales defined!");
   }
 
-  server.ext("onPreAuth", function (request, reply) {
+  server.ext("onPreAuth", function (request, h) {
     request.i18n = {};
     I18n.init(request, request.i18n);
     request.i18n.setLocale(defaultLocale);
     if (request.params && request.params.languageCode) {
       if (_.includes(pluginOptions.locales, request.params.languageCode) == false) {
-        return reply(Boom.notFound("No localization available for " + request.params.languageCode));
+        //return reply(Boom.notFound("No localization available for " + request.params.languageCode));
+        return h.continue;
       }
       request.i18n.setLocale(request.params.languageCode);
     } else if (pluginOptions.queryParameter && request.query && request.query[pluginOptions.queryParameter]) {
       if (_.includes(pluginOptions.locales, request.query[pluginOptions.queryParameter]) == false) {
-        return reply(Boom.notFound("No localization available for " + request.query[pluginOptions.queryParameter]));
+        //return reply(Boom.notFound("No localization available for " + request.query[pluginOptions.queryParameter]));
+        return h.continue;
       }
       request.i18n.setLocale(request.query[pluginOptions.queryParameter]);
     } else if (pluginOptions.languageHeaderField && request.headers[pluginOptions.languageHeaderField]) {
@@ -37,22 +39,22 @@ exports.register = function (server, options, next) {
         request.i18n.setLocale(languageCode);
       }
     }
-    return reply.continue();
+    return h.continue;
   });
 
-  server.ext("onPreResponse", function (request, reply) {
+  server.ext("onPreResponse", function (request, h) {
     if (!request.i18n || !request.response) {
-      return reply.continue();
+      return h.continue;
     }
     var response = request.response;
     if (response.variety === 'view') {
       response.source.context = Hoek.merge(response.source.context || {}, request.i18n);
       response.source.context.languageCode = request.i18n.getLocale();
     }
-    return reply.continue();
+    return h.continue;
   })
 
-  next();
+  //next();
 };
 
 exports.extractDefaultLocale = function (allLocales) {
