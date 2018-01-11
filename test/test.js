@@ -126,12 +126,11 @@ async function setupServer() {
         Handlebars.registerHelper('i18n',function(context){
           return request.i18n.__(context);
         });
-        var response = h.view("test",{
+        return response = h.view("test",{
           title: 'Hapi i18n handlebars test',
           message: "All's well that ends well.",
           languageCode: request.params.languageCode
         })
-        return (response);
       }
     }
   });
