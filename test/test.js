@@ -126,7 +126,7 @@ async function setupServer() {
         Handlebars.registerHelper('i18n',function(context){
           return request.i18n.__(context);
         });
-        return response = h.view("test",{
+        return h.view("test",{
           title: 'Hapi i18n handlebars test',
           message: "All's well that ends well.",
           languageCode: request.params.languageCode
@@ -145,7 +145,6 @@ async function startServer() {
         server.views({
           engines: {
             html: require('handlebars'),
-            //helpers: require('./handlebars-helpers/i18n')
           },
           relativeTo: __dirname,
 					path: __dirname + '/views',
