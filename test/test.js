@@ -123,12 +123,14 @@ async function setupServer() {
     path: "/{languageCode}/localized/view",
     options: {
       handler: function (request, h) {
+        Handlebars.registerHelper('i18n',function(context){
+          return request.i18n.__(context);
+        });
         var response = h.view("test",{
           title: 'Hapi i18n handlebars test',
           message: "All's well that ends well.",
           languageCode: request.params.languageCode
         })
-        //console.log(response);
         return (response);
       }
     }
@@ -143,10 +145,12 @@ async function startServer() {
 
         server.views({
           engines: {
-            html: require('handlebars')
+            html: require('handlebars'),
+            //helpers: require('./handlebars-helpers/i18n')
           },
           relativeTo: __dirname,
 					path: __dirname + '/views',
+
         });
 
 
@@ -329,7 +333,7 @@ describe("Localization", function () {
         })
         .then ( (response) => {
           response.statusCode.should.equal(200);
-          response.result.should.equal("<!DOCTYPE html><html lang=fr><body><p>Tout est bien qui finit bien.</p></body></html>");
+          response.result.should.equal("<!DOCTYPE html><html lang=fr><body><p>Tout est bien qui finit bien.</p></body></html>\n");
         });
     });
 
@@ -363,7 +367,7 @@ describe("Localization", function () {
 
 
 
-    it("must asure correct localization when processing requests concurrently", function () {
+    it("must asure correct localization when processing requests concurrently", function (done) {
       var numIterations = 200;
       var numRequestsPerIteration = 3;
       var numProcessedRequests = 0;
