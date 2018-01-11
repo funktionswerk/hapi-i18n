@@ -24,13 +24,11 @@ exports.register = function (server, options) {
     if (request.params && request.params.languageCode) {
       if (_.includes(pluginOptions.locales, request.params.languageCode) == false) {
         throw Boom.notFound("No localization available for " + request.params.languageCode);
-        //return h.continue;
       }
       request.i18n.setLocale(request.params.languageCode);
     } else if (pluginOptions.queryParameter && request.query && request.query[pluginOptions.queryParameter]) {
       if (_.includes(pluginOptions.locales, request.query[pluginOptions.queryParameter]) == false) {
         throw Boom.notFound("No localization available for " + request.query[pluginOptions.queryParameter]);
-        //return h.continue;
       }
       request.i18n.setLocale(request.query[pluginOptions.queryParameter]);
     } else if (pluginOptions.languageHeaderField && request.headers[pluginOptions.languageHeaderField]) {
@@ -49,22 +47,15 @@ exports.register = function (server, options) {
     var response = request.response;
 
     if (Boom.isBoom(response)) {
-      //console.log("onPreResponse boom error " + JSON.stringify(response));
       return response;
     }
-
-    // console.log(response.variety);
-    // console.log(response.source);
 
     if (response.variety === 'view') {
       response.source.context = Hoek.merge(response.source.context || {}, request.i18n);
       response.source.context.languageCode = request.i18n.getLocale();
     }
-    // console.log(response.source);
     return h.continue;
   })
-
-  //next();
 };
 
 exports.extractDefaultLocale = function (allLocales) {
