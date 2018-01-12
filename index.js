@@ -1,7 +1,7 @@
-var I18n = require("i18n");
-var Boom = require("boom");
-var Hoek = require("hoek");
-var _ = require("lodash");
+var I18n = require('i18n');
+var Boom = require('boom');
+var Hoek = require('hoek');
+var _ = require('lodash');
 
 exports.register = function (server, options) {
 
@@ -14,21 +14,21 @@ exports.register = function (server, options) {
   var defaultLocale = pluginOptions.defaultLocale || exports.extractDefaultLocale(pluginOptions.locales);
 
   if (!pluginOptions.locales) {
-    throw Error("No locales defined!");
+    throw Error('No locales defined!');
   }
 
-  server.ext("onPreAuth", function (request, h) {
+  server.ext('onPreAuth', function (request, h) {
     request.i18n = {};
     I18n.init(request, request.i18n);
     request.i18n.setLocale(defaultLocale);
     if (request.params && request.params.languageCode) {
       if (_.includes(pluginOptions.locales, request.params.languageCode) == false) {
-        throw Boom.notFound("No localization available for " + request.params.languageCode);
+        throw Boom.notFound('No localization available for ' + request.params.languageCode);
       }
       request.i18n.setLocale(request.params.languageCode);
     } else if (pluginOptions.queryParameter && request.query && request.query[pluginOptions.queryParameter]) {
       if (_.includes(pluginOptions.locales, request.query[pluginOptions.queryParameter]) == false) {
-        throw Boom.notFound("No localization available for " + request.query[pluginOptions.queryParameter]);
+        throw Boom.notFound('No localization available for ' + request.query[pluginOptions.queryParameter]);
       }
       request.i18n.setLocale(request.query[pluginOptions.queryParameter]);
     } else if (pluginOptions.languageHeaderField && request.headers[pluginOptions.languageHeaderField]) {
@@ -40,7 +40,7 @@ exports.register = function (server, options) {
     return h.continue;
   });
 
-  server.ext("onPreResponse", function (request, h) {
+  server.ext('onPreResponse', function (request, h) {
     if (!request.i18n || !request.response) {
       return h.continue;
     }
@@ -60,10 +60,10 @@ exports.register = function (server, options) {
 
 exports.extractDefaultLocale = function (allLocales) {
   if (!allLocales) {
-    throw new Error("No locales defined!");
+    throw new Error('No locales defined!');
   }
   if (allLocales.length === 0) {
-    throw new Error("Locales array is empty!");
+    throw new Error('Locales array is empty!');
   }
   return allLocales[0];
 };
