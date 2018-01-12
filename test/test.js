@@ -209,7 +209,7 @@ describe("Localization", function () {
       }
 
       try {
-        return server.register({ plugin: {register: Locale.register, pkg: Locale.register.attributes.pkg}, options: i18n_options});
+        return await server.register({plugin: Locale, options:i18n_options});
       }
       catch (err) {
         Should.not.exist(err);
@@ -234,9 +234,11 @@ describe("Localization", function () {
           url: "/no/language-code/path/parameter"
         })
         .then ( (response) => {
+          doSomething(function(){
             response.result.locale.should.equal("de");
             response.result.message.should.equal(translateString_de);
           });
+        });
     });
 
     it("uses the requested locale if language code is provided", function () {
