@@ -2,7 +2,7 @@
 Translation module for hapi based on mashpie's i18n module.
 
 This version is for Hapi 17+.
-For Hapi versions < 17 use version tbd
+For Hapi versions < 17 use version 1.0.5
 
 ## Installation
 ```
