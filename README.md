@@ -95,10 +95,7 @@ async function startServer() {
   try {
 
     ...
-    await server.register(
-      { plugin: {register: i18n.register, pkg: i18n.register.attributes.pkg},
-        options: i18n_options
-      });
+    await server.register({plugin: Locale, options:i18n_options});
     ...
 
     await server.start();
