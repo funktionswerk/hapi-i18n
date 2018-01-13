@@ -1,8 +1,7 @@
 # hapi-i18n
 Translation module for hapi based on mashpie's i18n module.
 
-This version is for Hapi 17+.
-For Hapi versions < 17 use version 1.0.5
+**The latest version is for Hapi 17+. For Hapi versions < 17 use [version 1.0.5](https://github.com/funktionswerk/hapi-i18n/releases/tag/1.0.5)**
 
 ## Installation
 ```
