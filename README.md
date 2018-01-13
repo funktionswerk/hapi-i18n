@@ -112,7 +112,7 @@ server.route({
 Example request:
 
 ```
-http://localhost/fr/my/localized/resource.
+http://localhost/fr/localized/resource.
 ```
 The language code is evaluated automatically. If a language code is found for the requested path parameter then the according locale is set.
 If the language code does not match any of the configured language codes, the plugin returns 404 (NotFound).
