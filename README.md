@@ -45,20 +45,20 @@ html(lang=languageCode)
 #### Handlebars Template
 
 ```html
-<p>{{#i18n "My localised string"}}{{/i18n}}</p>
+<p>{{#i18n "My localized string"}}{{/i18n}}</p>
 ```
 
 For Handlebars you need to specify a helper:
 
 ```js
-Handlebars.registerHelper('i18n',function(context){
+Handlebars.registerHelper('i18n', function(context) {
   return this.__(context);
 });
 server.route({
   ...
   options: {
     handler: function (request, h) {
-      return h.view('A beautiful localised webpage',{
+      return h.view('A localized webpage', {
         ...
         languageCode: request.params.languageCode
       })
