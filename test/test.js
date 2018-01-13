@@ -25,17 +25,33 @@ async function setupServer() {
 
   server = new Hapi.Server(serverOptions);
 
+  var doSomething = () => {
+    return new Promise((resolve) => {
+      var data = {
+        rows: []
+      };
+      for (i = 1; i < 100; ++i) {
+        data.rows.push(i);
+      }
+      var fs = require('fs');
+      var fileName = Path.join(__dirname, 'database.json');
+      fs.writeFile(fileName, JSON.stringify(data), function (err) {
+        Should.not.exist(err);
+        resolve();
+      });
+    });
+  };
+
   server.route({
     method: 'GET',
     path: '/no/language-code/path/parameter',
     options: {
-      handler: function (request, h) {
-        return (
-          {
-            locale: request.i18n.getLocale(),
-            message: request.i18n.__(translateString_en)
-          }
-        );
+      handler: async function (request, h) {
+        await doSomething();
+        return {
+          locale: request.i18n.getLocale(),
+          message: request.i18n.__(translateString_en)
+        };
       }
     }
   });
@@ -44,14 +60,13 @@ async function setupServer() {
     method: 'GET',
     path: '/{languageCode}/localized/resource',
     options: {
-      handler: function (request, h) {
-        return (
-          {
-            locale: request.i18n.getLocale(),
-            requestedLocale: request.params.languageCode,
-            message: request.i18n.__(translateString_en)
-          }
-        );
+      handler: async function (request, h) {
+        await doSomething();
+        return ({
+          locale: request.i18n.getLocale(),
+          requestedLocale: request.params.languageCode,
+          message: request.i18n.__(translateString_en)
+        });
       }
     }
   });
@@ -77,14 +92,13 @@ async function setupServer() {
     method: 'GET',
     path: '/localized/with/headers',
     options: {
-      handler: function (request, h) {
-        return (
-          {
-            locale: request.i18n.getLocale(),
-            requestedLocale: request.headers['language'],
-            message: request.i18n.__(translateString_en)
-          }
-        );
+      handler: async function (request, h) {
+        await doSomething();
+        return ({
+          locale: request.i18n.getLocale(),
+          requestedLocale: request.headers['language'],
+          message: request.i18n.__(translateString_en)
+        });
       }
     }
   });
@@ -93,14 +107,13 @@ async function setupServer() {
     method: 'GET',
     path: '/localized/with/query',
     options: {
-      handler: function (request, h) {
-        return (
-          {
-            locale: request.i18n.getLocale(),
-            requestedLocale: request.query['lang'],
-            message: request.i18n.__(translateString_en)
-          }
-        );
+      handler: async function (request, h) {
+        await doSomething();
+        return ({
+          locale: request.i18n.getLocale(),
+          requestedLocale: request.query['lang'],
+          message: request.i18n.__(translateString_en)
+        });
       }
     }
   });
@@ -109,29 +122,28 @@ async function setupServer() {
     method: 'GET',
     path: '/localized/with/empty',
     options: {
-      handler: function (request, h) {
-        return (
-          {
-            locale: request.i18n.getLocale(),
-            requestedLocale: request.query['lang'],
-            message: request.i18n.__('')
-          }
-        );
+      handler: async function (request, h) {
+        await doSomething();
+        return ({
+          locale: request.i18n.getLocale(),
+          requestedLocale: request.query['lang'],
+          message: request.i18n.__('')
+        });
       }
     }
   });
-
 
   server.route({
     method: 'GET',
     path: '/{languageCode}/localized/view',
     options: {
-      handler: function (request, h) {
+      handler: async function (request, h) {
+        await doSomething();
         return h.view('test',{
           title: 'Hapi i18n handlebars test',
           message: 'All\'s well that ends well.',
           languageCode: request.params.languageCode
-        })
+        });
       }
     }
   });
@@ -172,22 +184,6 @@ after(async () => {
 describe('Localization', function () {
   describe('Usage of locale in hapi', function () {
 
-
-    var doSomething = (cb) => {
-      var data = {
-        rows: []
-      };
-      for (i = 1; i < 100; ++i) {
-        data.rows.push(i);
-      }
-      var fs = require('fs');
-      var fileName = Path.join(__dirname, 'database.json');
-      fs.writeFile(fileName, JSON.stringify(data), function (err) {
-        Should.not.exist(err);
-        cb();
-      });
-    };
-
     it('can be added as plugin', async () => {
       const i18n_options = {
         locales: ['de', 'en', 'fr'],
@@ -209,30 +205,24 @@ describe('Localization', function () {
     });
 
     it('uses the default locale if no language code path parameter is available', async () => {
-      await server.inject(
+      const response = await server.inject(
         {
           method: 'GET',
           url: '/no/language-code/path/parameter'
         })
-        .then ( (response) => {
-          doSomething(function(){
-            response.result.locale.should.equal('de');
-            response.result.message.should.equal(translateString_de);
-          });
-        });
+      response.result.locale.should.equal('de');
+      response.result.message.should.equal(translateString_de);
     });
 
     it('uses the requested locale if language code is provided', async () => {
-      await server.inject(
+      const response = await server.inject(
         {
           method: 'GET',
           url: '/fr/localized/resource'
         })
-        .then( (response) => {
-          response.result.locale.should.equal('fr');
-          response.result.requestedLocale.should.equal('fr');
-          response.result.message.should.equal(translateString_fr);
-        });
+      response.result.locale.should.equal('fr');
+      response.result.requestedLocale.should.equal('fr');
+      response.result.message.should.equal(translateString_fr);
     });
 
     it('uses the requested locale if language code is provided in headers', async () => {
