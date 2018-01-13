@@ -14,6 +14,10 @@ const translateString_fr = 'Tout est bien qui finit bien.';
 
 var server;
 
+Handlebars.registerHelper('i18n',function(context){
+  return this.__(context);
+});
+
 async function setupServer() {
   const serverOptions = {
     port: 8047
@@ -123,9 +127,6 @@ async function setupServer() {
     path: '/{languageCode}/localized/view',
     options: {
       handler: function (request, h) {
-        Handlebars.registerHelper('i18n',function(context){
-          return request.i18n.__(context);
-        });
         return h.view('test',{
           title: 'Hapi i18n handlebars test',
           message: 'All\'s well that ends well.',
@@ -188,7 +189,6 @@ describe('Localization', function () {
     };
 
     it('can be added as plugin', async () => {
-
       const i18n_options = {
         locales: ['de', 'en', 'fr'],
         directory: __dirname + '/locales',
@@ -198,11 +198,11 @@ describe('Localization', function () {
       await server.register({plugin: Locale, options:i18n_options});
     });
 
-    it('extracts the default locale from the configured locales', function () {
-      Should.throws(function () {
+    it('extracts the default locale from the configured locales', () => {
+      Should.throws(() => {
         Locale.extractDefaultLocale()
       }, Error);
-      Should.throws(function () {
+      Should.throws(() => {
         Locale.extractDefaultLocale([])
       }, Error);
       Locale.extractDefaultLocale(['fr', 'de']).should.equal('fr');

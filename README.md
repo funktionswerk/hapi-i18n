@@ -15,18 +15,18 @@ For details see the examples in the [mocha tests](test/test.js).
 
 The i18n module is attached to the request object configured with the requested locale. This ensures that the correct locale is set for the request when processing multiple requests at the same time.
 
-JavaScript example:
+#### JavaScript
 
 ```js
-function ( request, h ){
+function (request, h){
   return {
-    message: request.i18n.__( "My localized string" )
+    message: request.i18n.__('My localized string')
   };
 });
 
 ```
 
-Template example (Jade):
+#### Jade Template
 
 ```js
 doctype html
@@ -36,22 +36,29 @@ html(lang=languageCode)
     p!= __("hello", {name:"Manu"})
 ```
 
-Template example (Handlebars):
 
+#### Nunjucks Template
 ```
+<p>{{ __("My localized string") }}</p>
+<p>{{ __("hello", {name:"Manu"}) }}</p>
+<p>{{ __("hello", name="Manu2") }}</p>
+```
+#### Handlebars Template
+
+```html
 <p>{{#i18n "My localised string"}}{{/i18n}}</p>
 ```
 
-In the server:
+For Handlebars you need to specify a helper:
 
 ```js
+Handlebars.registerHelper('i18n',function(context){
+  return this.__(context);
+});
 server.route({
   ...
   options: {
     handler: function (request, h) {
-      Handlebars.registerHelper('i18n',function(context){
-        return request.i18n.__(context);
-      });
       return h.view("A beautiful localised webpage",{
         ...
         languageCode: request.params.languageCode
@@ -60,13 +67,6 @@ server.route({
   }
 });
 
-```
-
-Template example (Nunjucks):
-```
-<p>{{ __("My localized string") }}</p>
-<p>{{ __("hello", {name:"Manu"}) }}</p>
-<p>{{ __("hello", name="Manu2") }}</p>
 ```
 
 ## Register Plugin
