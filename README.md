@@ -59,7 +59,7 @@ server.route({
   ...
   options: {
     handler: function (request, h) {
-      return h.view("A beautiful localised webpage",{
+      return h.view('A beautiful localised webpage',{
         ...
         languageCode: request.params.languageCode
       })
@@ -71,58 +71,6 @@ server.route({
 
 ## Register Plugin
 
-```js
-'use strict';
-
-const Hapi = require('hapi');
-const i18n = require( "hapi-i18n" );
-
-const server_options = {
-	port: 5555
-};
-
-const i18n_options = {
-   locales: ["de", "en", "fr"],
-   directory: __dirname + "/config/locales",
-   languageHeaderField: "language",
-   queryParameter: "lang",
-   defaultLocale: 'en'
-};
-
-const server = new Hapi.Server(server_options);
-
-async function startServer() {
-  try {
-
-    ...
-    await server.register({plugin: Locale, options:i18n_options});
-    ...
-
-    await server.start();
-
-  }
-  catch (err) {
-        console.log(err);
-        process.exit(1);
-  }
-  console.log('International server running at:', server.info.uri);
-
-  // listen on SIGINT signal and gracefully stop the server
-  process.on('SIGINT', function () {
-    console.log('stopping International server');
-
-    server.stop({ timeout: 5000 }).then(function (err) {
-      console.log('International Hapi server stopped');
-      process.exit((err) ? 1 : 0);
-    });
-  });
-
-}
-
-startServer();
-
-```
-
 There are three possibilities to pass and read the language code.
 
 ### Path parameter
@@ -131,11 +79,13 @@ The first option is passing the language code with a path parameter.
 The basic configuration to define the supported locales and the directory to load the translation files from is as follows:
 
 ```js
-const i18n_options = {
-   locales: ["de", "en", "fr"],
-   directory: __dirname + "/locales"
-};
-
+await server.register({
+  plugin: require('hapi-i18n'),
+  options: {
+    locales: ['de', 'en', 'fr'],
+    directory: __dirname + '/locales'
+  });
+}
 ```
 
 The configuration options are passed directly to mashpie's i18n module.
@@ -145,13 +95,13 @@ The requested language is specified by a path parameter *languageCode* in your r
 
 ```js
 server.route({
-  method: "GET",
-  path: "/{languageCode}/localized/resource",
+  method: 'GET',
+  path: '/{languageCode}/localized/resource',
   options: {
     handler: function (request, h) {
       return (
         {
-          message: request.i18n.__("My localized string")
+          message: request.i18n.__('My localized string')
         }
       );
     }
@@ -173,12 +123,14 @@ If the language code does not match any of the configured language codes, the pl
 The second option is reading the language code from the request header:
 
 ```js
-const i18n_options = {
-   locales: ["de", "en", "fr"],
-   directory: __dirname + "/config/locales",
-   languageHeaderField: "language"
-};
-
+await server.register({
+  plugin: require('hapi-i18n'),
+  options: {
+    locales: ['de', 'en', 'fr'],
+    directory: __dirname + '/locales',
+    languageHeaderField: 'language'
+  });
+}
 ```
 
 ### Query parameter
@@ -186,11 +138,14 @@ const i18n_options = {
 A third option is passing the language code with a query parameter (plugin option `queryParameter`). Example:
 
 ```js
-const i18n_options = {
-   locales: ["de", "en", "fr"],
-   directory: __dirname + "/config/locales",
-   queryParameter: "lang"
-};
+await server.register({
+  plugin: require('hapi-i18n'),
+  options: {
+    locales: ['de', 'en', 'fr'],
+    directory: __dirname + '/locales',
+    queryParameter: 'lang'
+  });
+}
 ```
 
 The requested locale can be passed with the `lang` query parameter. Example request:
@@ -207,11 +162,12 @@ If no locale is defined, the default locale is selected. By default, the default
 However, you can specify this with the `defaultLocale` parameter :
 
 ```js
-
-const i18n_options = {
-   locales: ["de", "en", "fr"],
-   directory: __dirname + "/config/locales",
-   defaultLocale: 'en',
-};
-
+await server.register({
+  plugin: require('hapi-i18n'),
+  options: {
+    locales: ['de', 'en', 'fr'],
+    directory: __dirname + '/locales',
+    defaultLocale: 'en'
+  });
+}
 ```
