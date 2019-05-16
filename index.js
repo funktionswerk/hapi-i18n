@@ -15,6 +15,20 @@ exports.extractDefaultLocale = function(allLocales){
   return allLocales[0];
 };
 
+function detectLocaleFromAcceptedLanguages(acceptedLanguages, localesSupported) {
+  var acceptedLanguageCodes = acceptLanguageParser.parse(acceptedLanguages);
+  var matchedLanguageFound = acceptedLanguageCodes.find(function (languageCode) {
+    return localesSupported.includes(languageCode.code);
+  });
+  if (matchedLanguageFound) {
+    var matchedLanguageCode = matchedLanguageFound.code;
+    if (matchedLanguageFound.region && localesSupported.includes(matchedLanguageFound.code + '-' + matchedLanguageFound.region)) {
+      return matchedLanguageFound.code + '-' + matchedLanguageFound.region;
+    }
+    return matchedLanguageFound.code;
+  }
+}
+
 exports.plugin = {
   name: pkg.name,
   version: pkg.version,
@@ -47,15 +61,11 @@ exports.plugin = {
         }
         request.i18n.setLocale(request.query[pluginOptions.queryParameter]);
       } else if (pluginOptions.languageHeaderField && request.headers[pluginOptions.languageHeaderField]) {
-        var acceptedLanguageCodes = acceptLanguageParser.parse(request.headers[pluginOptions.languageHeaderField]);
-        var matchedLanguageFound = acceptedLanguageCodes.find(function (languageCode) {
-          return pluginOptions.locales.includes(languageCode.code);
-        });
-        if (matchedLanguageFound) {
-          var matchedLanguageCode = matchedLanguageFound.code;
-          if (matchedLanguageFound.region && pluginOptions.locales.includes(matchedLanguageFound.code + '-' + matchedLanguageFound.region)) {
-            matchedLanguageCode = matchedLanguageFound.code + '-' + matchedLanguageFound.region;
-          }
+        var matchedLanguageCode = detectLocaleFromAcceptedLanguages(
+            request.headers[pluginOptions.languageHeaderField],
+            pluginOptions.locales
+        );
+        if (matchedLanguageCode) {
           request.i18n.setLocale(matchedLanguageCode);
         }
       }
