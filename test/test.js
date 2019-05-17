@@ -143,6 +143,7 @@ async function setupServer() {
         return h.view('test',{
           title: 'Hapi i18n handlebars test',
           message: 'All\'s well that ends well.',
+          song: request.i18n.__n('%s bottles of beer on the wall.', 99),
           languageCode: request.params.languageCode
         });
       }
@@ -326,7 +327,7 @@ describe('Localization', function () {
         }
       );
       response.statusCode.should.equal(200);
-      response.result.should.equal('<!DOCTYPE html><html lang=fr><body><p>Tout est bien qui finit bien.</p></body></html>\n');
+      response.result.should.equal('<!DOCTYPE html><html lang=fr><body><p>Tout est bien qui finit bien.</p><p>99 bouteilles de bière sur le mur.</p></body></html>\n');
     });
 
     it('returns status code NOT-FOUND if the requested locale is not available', async () => {

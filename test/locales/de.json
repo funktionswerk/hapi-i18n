@@ -1,4 +1,8 @@
 {
 	"All's well that ends well.": "Ende gut, alles gut.",
-  	"Validation failed": "Prüfung fehlgeschlagen"
+	"Validation failed": "Prüfung fehlgeschlagen",
+	"%s bottles of beer on the wall.": {
+		"one": "%s Bierflasche an der Wand.",
+		"other": "%s Bierflaschen an der Wand."
+	}
 }

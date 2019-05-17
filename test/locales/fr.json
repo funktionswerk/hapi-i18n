@@ -1,4 +1,8 @@
 {
 	"All's well that ends well.": "Tout est bien qui finit bien.",
+	"%s bottles of beer on the wall.": {
+		"one": "%s bouteille de bière sur le mur.",
+		"other": "%s bouteilles de bière sur le mur."
+	},
 	"": ""
 }
