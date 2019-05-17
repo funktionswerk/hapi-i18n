@@ -1,6 +1,7 @@
 var I18n = require('i18n');
 var Boom = require('boom');
 var Hoek = require('hoek');
+var acceptLanguageParser = require('accept-language-parser');
 var _ = require('lodash');
 var pkg = require('./package.json');
 
@@ -13,6 +14,20 @@ exports.extractDefaultLocale = function(allLocales){
   }
   return allLocales[0];
 };
+
+function detectLocaleFromAcceptedLanguages(acceptedLanguages, localesSupported) {
+  var acceptedLanguageCodes = acceptLanguageParser.parse(acceptedLanguages);
+  var matchedLanguageFound = acceptedLanguageCodes.find(function (languageCode) {
+    return localesSupported.includes(languageCode.code);
+  });
+  if (matchedLanguageFound) {
+    var matchedLanguageCode = matchedLanguageFound.code;
+    if (matchedLanguageFound.region && localesSupported.includes(matchedLanguageFound.code + '-' + matchedLanguageFound.region)) {
+      return matchedLanguageFound.code + '-' + matchedLanguageFound.region;
+    }
+    return matchedLanguageFound.code;
+  }
+}
 
 exports.plugin = {
   name: pkg.name,
@@ -46,9 +61,12 @@ exports.plugin = {
         }
         request.i18n.setLocale(request.query[pluginOptions.queryParameter]);
       } else if (pluginOptions.languageHeaderField && request.headers[pluginOptions.languageHeaderField]) {
-        var languageCode = request.headers[pluginOptions.languageHeaderField];
-        if (languageCode) {
-          request.i18n.setLocale(languageCode);
+        var matchedLanguageCode = detectLocaleFromAcceptedLanguages(
+            request.headers[pluginOptions.languageHeaderField],
+            pluginOptions.locales
+        );
+        if (matchedLanguageCode) {
+          request.i18n.setLocale(matchedLanguageCode);
         }
       }
       return h.continue;

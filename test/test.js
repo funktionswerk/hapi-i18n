@@ -9,6 +9,7 @@ const Handlebars = require('handlebars');
 
 
 const translateString_en = 'All\'s well that ends well.';
+const translateString_en_GB = 'All\'s well that ends well (british version).';
 const translateString_de = 'Ende gut, alles gut.';
 const translateString_fr = 'Tout est bien qui finit bien.';
 
@@ -96,7 +97,7 @@ async function setupServer() {
         await doSomething();
         return ({
           locale: request.i18n.getLocale(),
-          requestedLocale: request.headers['language'],
+          requestedLocale: request.headers['accept-language'],
           message: request.i18n.__(translateString_en)
         });
       }
@@ -142,6 +143,7 @@ async function setupServer() {
         return h.view('test',{
           title: 'Hapi i18n handlebars test',
           message: 'All\'s well that ends well.',
+          song: request.i18n.__n('%s bottles of beer on the wall.', 99),
           languageCode: request.params.languageCode
         });
       }
@@ -186,9 +188,9 @@ describe('Localization', function () {
 
     it('can be added as plugin', async () => {
       const i18n_options = {
-        locales: ['de', 'en', 'fr'],
+        locales: ['de', 'en-GB', 'en', 'fr'],
         directory: __dirname + '/locales',
-        languageHeaderField: 'language',
+        languageHeaderField: 'accept-language',
         queryParameter: 'lang'
       };
       await server.register({plugin: Locale, options:i18n_options});
@@ -231,13 +233,24 @@ describe('Localization', function () {
           method: 'GET',
           url: '/localized/with/headers',
           headers: {
-            'language': 'fr'
+            'accept-language': 'fr-CA,en-GB,en-US;q=0.9;q=0.7,en;q=0.8'
           }
         }
       );
       response.result.locale.should.equal('fr');
-      response.result.requestedLocale.should.equal('fr');
+      response.result.requestedLocale.should.equal('fr-CA,en-GB,en-US;q=0.9;q=0.7,en;q=0.8');
       response.result.message.should.equal(translateString_fr);
+      response = await server.inject(
+          {
+            method: 'GET',
+            url: '/localized/with/headers',
+            headers: {
+              'accept-language': 'es,en-GB,en-US;q=0.9;q=0.7,en;q=0.8'
+            }
+          }
+      );
+      response.result.locale.should.equal('en-GB');
+      response.result.message.should.equal(translateString_en_GB);
       response = await server.inject(
         {
           method: 'GET',
@@ -248,6 +261,21 @@ describe('Localization', function () {
       response.result.locale.should.equal('de');
       response.result.message.should.equal(translateString_de);
     });
+
+    it('uses the default locale if language codes in header don\'t match', async () => {
+      let response = await server.inject(
+        {
+          method: 'GET',
+          url: '/localized/with/headers',
+          headers: {
+            'accept-language': 'es,it'
+          }
+        }
+      );
+      response.result.locale.should.equal('de');
+      response.result.message.should.equal(translateString_de);
+    });
+
 
     it('uses the language query parameter over the header parameter because this is more explicit', async () => {
       const response = await server.inject(
@@ -267,7 +295,7 @@ describe('Localization', function () {
           method: 'GET',
           url: '/localized/with/empty',
           headers: {
-            'language': 'fr'
+            'accept-language': 'fr'
           }
         })
         .then ( (response) => {
@@ -282,7 +310,7 @@ describe('Localization', function () {
           method: 'GET',
           url: '/fr/localized/resource',
           headers: {
-            'language': 'en'
+            'accept-language': 'en'
           }
         }
       );
@@ -299,7 +327,7 @@ describe('Localization', function () {
         }
       );
       response.statusCode.should.equal(200);
-      response.result.should.equal('<!DOCTYPE html><html lang=fr><body><p>Tout est bien qui finit bien.</p></body></html>\n');
+      response.result.should.equal('<!DOCTYPE html><html lang=fr><body><p>Tout est bien qui finit bien.</p><p>99 bouteilles de bière sur le mur.</p></body></html>\n');
     });
 
     it('returns status code NOT-FOUND if the requested locale is not available', async () => {
