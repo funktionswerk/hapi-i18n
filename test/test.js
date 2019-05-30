@@ -327,7 +327,7 @@ describe('Localization', function () {
         }
       );
       response.statusCode.should.equal(200);
-      response.result.should.equal('<!DOCTYPE html><html lang=fr><body><p>Tout est bien qui finit bien.</p><p>99 bouteilles de bière sur le mur.</p></body></html>\n');
+      response.result.should.equal('<!DOCTYPE html><html lang=fr><body><p>Tout est bien qui finit bien.</p><p>99 bouteilles de bière sur le mur.</p><p>Langue courante: <strong>fr</strong></p></body></html>\n');
     });
 
     it('returns status code NOT-FOUND if the requested locale is not available', async () => {

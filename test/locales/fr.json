@@ -4,5 +4,6 @@
 		"one": "%s bouteille de bière sur le mur.",
 		"other": "%s bouteilles de bière sur le mur."
 	},
-	"": ""
+	"": "",
+	"Current languageCode: <strong>%s</strong>": "Langue courante: <strong>%s</strong>"
 }
