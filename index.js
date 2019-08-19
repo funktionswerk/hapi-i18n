@@ -50,6 +50,10 @@ exports.plugin = {
       request.i18n = {};
       I18n.init(request, request.i18n);
       request.i18n.setLocale(defaultLocale);
+      return h.continue;
+    });
+
+    server.ext('onPreAuth', function (request, h) {
       if (request.params && request.params.languageCode) {
         if (_.includes(pluginOptions.locales, request.params.languageCode) == false) {
           throw Boom.notFound('No localization available for ' + request.params.languageCode);
