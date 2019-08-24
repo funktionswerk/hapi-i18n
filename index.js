@@ -46,7 +46,7 @@ exports.plugin = {
       throw Error('No locales defined!');
     }
 
-    server.ext('onPreAuth', function (request, h) {
+    server.ext('onRequest', function (request, h) {
       request.i18n = {};
       I18n.init(request, request.i18n);
       request.i18n.setLocale(defaultLocale);
