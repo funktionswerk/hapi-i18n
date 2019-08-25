@@ -13,8 +13,6 @@ const translateString_en_GB = 'All\'s well that ends well (british version).';
 const translateString_de = 'Ende gut, alles gut.';
 const translateString_fr = 'Tout est bien qui finit bien.';
 
-var server;
-
 Handlebars.registerHelper('i18n',function(context){
   return this.__(context);
 });
@@ -24,7 +22,7 @@ async function setupServer() {
     port: 8047
   };
 
-  server = new Hapi.Server(serverOptions);
+  const server = new Hapi.Server(serverOptions);
 
   var doSomething = () => {
     return new Promise((resolve) => {
@@ -150,9 +148,10 @@ async function setupServer() {
     }
   });
 
+  return server;
 }
 
-async function startServer() {
+async function startServer(server) {
   try {
     await server.register(Vision);
     server.views({
@@ -172,19 +171,19 @@ async function startServer() {
   }
 }
 
-before(async () => {
-  await setupServer();
-  await startServer();
-});
-
-after(async () => {
-  const err = await server.stop({ timeout: 5000 });
-  console.log('Test hapi server stopped');
-  process.exit((err) ? 1 : 0);
-});
-
 describe('Localization', function () {
   describe('Usage of locale in hapi', function () {
+    let server;
+
+    before(async () => {
+      server = await setupServer();
+      await startServer(server);
+    });
+
+    after(async () => {
+      const err = await server.stop({ timeout: 5000 });
+      console.log('Test hapi server stopped');
+    });
 
     it('can be added as plugin', async () => {
       const i18n_options = {
@@ -433,5 +432,53 @@ describe('Localization', function () {
     })
 
   })
+
+  describe('with a custom 404 handler', () => {
+    let server;
+
+    before(async () => {
+      server = await setupServer();
+
+      const i18n_options = {
+        locales: ['de', 'en-GB', 'en', 'fr'],
+        directory: __dirname + '/locales',
+        languageHeaderField: 'accept-language',
+        queryParameter: 'lang'
+      };
+      await server.register({plugin: Locale, options:i18n_options});
+
+      server.ext('onPreResponse', (request, h) => {
+        const response = request.response;
+        if (response.isBoom) {
+          if (response.output.statusCode === 404) {
+            return h.view('test',{
+              title: 'Hapi i18n handlebars test',
+              message: 'All\'s well that ends well.',
+              song: request.i18n.__n('%s bottles of beer on the wall.', 99),
+              languageCode: request.params.languageCode
+            }).code(404);
+          }
+        }
+
+        return h.continue;
+      }, {before: 'hapi-i18n'});
+
+      await startServer(server);
+    });
+
+    after(async () => {
+      const err = await server.stop({ timeout: 5000 });
+      console.log('Test hapi server stopped');
+    });
+
+    it('is still available when handling missing routes', async () => {
+      const response = await server.inject({
+        method: 'GET',
+        url: '/does-not-exist'
+      });
+      response.statusCode.should.equal(404);
+      should(response.result).startWith('<!DOCTYPE html><html lang=');
+    });
+  });
 
 })
