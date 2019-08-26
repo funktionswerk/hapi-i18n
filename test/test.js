@@ -163,7 +163,6 @@ async function startServer(server) {
 
     });
     await server.start();
-    console.log('Test Hapi server running at:', server.info.uri);
   }
   catch (err) {
     console.log(err);
@@ -182,7 +181,6 @@ describe('Localization', function () {
 
     after(async () => {
       const err = await server.stop({ timeout: 5000 });
-      console.log('Test hapi server stopped');
     });
 
     it('can be added as plugin', async () => {
@@ -431,7 +429,7 @@ describe('Localization', function () {
       }
     })
 
-  })
+  });
 
   describe('with a custom 404 handler', () => {
     let server;
@@ -468,7 +466,6 @@ describe('Localization', function () {
 
     after(async () => {
       const err = await server.stop({ timeout: 5000 });
-      console.log('Test hapi server stopped');
     });
 
     it('is still available when handling missing routes', async () => {
