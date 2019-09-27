@@ -1,6 +1,6 @@
 {
   "name": "hapi-i18n",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Translation module for hapi based on mashpie's i18n module",
   "main": "index.js",
   "directories": {
