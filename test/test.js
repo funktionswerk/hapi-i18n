@@ -187,7 +187,7 @@ describe('Localization', function () {
       const i18n_options = {
         locales: ['de', 'en-GB', 'en', 'fr'],
         directory: __dirname + '/locales',
-        languageHeaderField: 'accept-language',
+        languageHeaderField: 'Accept-language',
         queryParameter: 'lang'
       };
       await server.register({plugin: Locale, options:i18n_options});
@@ -242,7 +242,7 @@ describe('Localization', function () {
             method: 'GET',
             url: '/localized/with/headers',
             headers: {
-              'accept-language': 'es,en-GB,en-US;q=0.9;q=0.7,en;q=0.8'
+              'Accept-Language': 'es,en-GB,en-US;q=0.9;q=0.7,en;q=0.8'
             }
           }
       );

@@ -34,10 +34,11 @@ exports.plugin = {
   version: pkg.version,
   pkg: pkg ,
   register: function(server, options){
-    var pluginOptions = {};
-    if (options) {
-      pluginOptions = options;
+    var pluginOptions = options ? options : {};
+    if (pluginOptions.languageHeaderField) {
+      pluginOptions.languageHeaderField = pluginOptions.languageHeaderField.toLowerCase();
     }
+    console.log(pluginOptions.languageHeaderField);
     I18n.configure(pluginOptions);
 
     var defaultLocale = pluginOptions.defaultLocale || exports.extractDefaultLocale(pluginOptions.locales);
