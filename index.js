@@ -38,7 +38,6 @@ exports.plugin = {
     if (pluginOptions.languageHeaderField) {
       pluginOptions.languageHeaderField = pluginOptions.languageHeaderField.toLowerCase();
     }
-    console.log(pluginOptions.languageHeaderField);
     I18n.configure(pluginOptions);
 
     var defaultLocale = pluginOptions.defaultLocale || exports.extractDefaultLocale(pluginOptions.locales);
