@@ -1,7 +1,7 @@
 const Should = require('should');
-const Hapi = require('hapi');
+const Hapi = require('@hapi/hapi');
+const Joi = require('@hapi/joi');
 const Path = require('path');
-const Joi = require('joi');
 const Boom = require('boom');
 const Locale = require('../');
 const Vision = require('vision');
@@ -77,9 +77,9 @@ async function setupServer() {
       handler: function () {
       },
       validate: {
-        payload: {
+        payload: Joi.object({
           param: Joi.string().required()
-        },
+        }),
         failAction: (request, h, error) => {
           throw Boom.badRequest(request.i18n.__('Validation failed'));
         }
