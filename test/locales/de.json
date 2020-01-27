@@ -4,5 +4,6 @@
 	"%s bottles of beer on the wall.": {
 		"one": "%s Bierflasche an der Wand.",
 		"other": "%s Bierflaschen an der Wand."
-	}
+	},
+	"Current languageCode: <strong>%s</strong>": "Current languageCode: <strong>%s</strong>"
 }

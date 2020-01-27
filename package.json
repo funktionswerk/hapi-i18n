@@ -39,7 +39,7 @@
     "accept-language-parser": "^1.5.0",
     "boom": "^7.1.1",
     "hoek": "^5.0.2",
-    "i18n": "funktionswerk/i18n-node#master",
+    "i18n": "^0.8.5",
     "lodash": "^4.17.4"
   }
 }
