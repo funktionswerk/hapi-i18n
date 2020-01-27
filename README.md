@@ -25,7 +25,7 @@ function (request, h){
 
 ```
 
-#### Jade Template
+#### Pug Template
 
 ```js
 doctype html

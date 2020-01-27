@@ -30,7 +30,6 @@
     "@hapi/hapi": "^19.0.5",
     "@hapi/joi": "^17.1.0",
     "handlebars": "^4.0.11",
-    "jade": "^1.9.2",
     "mocha": "^4.1.0",
     "should": "^13.2.0",
     "vision": "^5.3.0"
