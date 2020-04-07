@@ -23,9 +23,9 @@
   "author": "Kay Wolter",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/codeva/hapi-i18n/issues"
+    "url": "https://github.com/funktionswerk/hapi-i18n/issues"
   },
-  "homepage": "https://github.com/codeva/hapi-i18n",
+  "homepage": "https://github.com/funktionswerk/hapi-i18n",
   "devDependencies": {
     "@hapi/hapi": "^19.0.5",
     "@hapi/joi": "^17.1.0",
