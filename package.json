@@ -29,8 +29,8 @@
   "devDependencies": {
     "@hapi/hapi": "^19.0.5",
     "@hapi/joi": "^17.1.0",
-    "handlebars": "^4.0.11",
-    "mocha": "^4.1.0",
+    "handlebars": "^4.7.7",
+    "mocha": "^8.3.0",
     "should": "^13.2.0",
     "vision": "^5.3.0"
   },
