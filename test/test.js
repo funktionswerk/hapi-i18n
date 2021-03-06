@@ -339,6 +339,29 @@ describe('Localization', function () {
         payload.message.should.equal('No localization available for en-US');
     });
 
+    it('allows other plugins to handle pre response', async () => {
+      let otherPluginCalled = false;
+      const otherPluginWithPreResponseHandling = {
+        name: 'onPreResponseTest',
+        register: function (server, options) {
+          server.ext('onPreResponse', function (request, h) {
+            otherPluginCalled = true;
+            return h.continue;
+          });
+        }
+      };
+      await server.register({plugin: otherPluginWithPreResponseHandling});
+      const response = await server.inject(
+        {
+          method: 'GET',
+          url: '/en-US/localized/resource'
+        }
+      );
+      const payload = JSON.parse(response.payload);
+      payload.statusCode.should.equal(404);
+      otherPluginCalled.should.be.true();
+    });
+
     it('is available in the validation failAction handler ', async () => {
       const response = await server.inject(
         {
@@ -476,6 +499,7 @@ describe('Localization', function () {
       response.statusCode.should.equal(404);
       should(response.result).startWith('<!DOCTYPE html><html lang=');
     });
+
   });
 
 })
